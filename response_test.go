@@ -66,7 +66,7 @@ func TestResponseHandling(t *testing.T) {
 	c.handleResponse(dummySuccessfulResponse)
 
 	var expected []interface{}
-	expected = append(expected, dummySuccessfulResponseMarshalled.data)
+	expected = append(expected, dummySuccessfulResponseMarshalled)
 
 	if reflect.TypeOf(expected).String() != reflect.TypeOf(c.retrieveResponse(dummySuccessfulResponseMarshalled.requestId)).String() {
 		t.Error("Expected data type does not match actual.")
@@ -101,7 +101,7 @@ func TestResponseAuthHandling(t *testing.T) {
 	c.handleResponse(dummySuccessfulResponse) //If authentication is successful the server returns the origin petition
 
 	var expectedSuccessful []interface{}
-	expectedSuccessful = append(expectedSuccessful, dummySuccessfulResponseMarshalled.data)
+	expectedSuccessful = append(expectedSuccessful, dummySuccessfulResponseMarshalled)
 
 	if reflect.TypeOf(expectedSuccessful).String() != reflect.TypeOf(c.retrieveResponse(dummySuccessfulResponseMarshalled.requestId)).String() {
 		t.Error("Expected data type does not match actual.")
@@ -116,7 +116,7 @@ func TestResponseMarshalling(t *testing.T) {
 	}
 	if dummySuccessfulResponseMarshalled.requestId != resp.requestId || dummySuccessfulResponseMarshalled.code != resp.code {
 		t.Error("Expected requestId and code does not match actual.")
-	} else if reflect.TypeOf(resp.data).String() != "[]interface {}" {
+	} else if reflect.TypeOf(resp).String() != "[]interface {}" {
 		t.Error("Expected data type does not match actual.")
 	}
 }
@@ -129,7 +129,7 @@ func TestResponseSortingSingleResponse(t *testing.T) {
 	c.saveResponse(dummySuccessfulResponseMarshalled)
 
 	var expected []interface{}
-	expected = append(expected, dummySuccessfulResponseMarshalled.data)
+	expected = append(expected, dummySuccessfulResponseMarshalled)
 
 	result, _ := c.results.Load(dummySuccessfulResponseMarshalled.requestId)
 	if reflect.DeepEqual(result.([]interface{}), expected) != true {
@@ -146,8 +146,8 @@ func TestResponseSortingMultipleResponse(t *testing.T) {
 	c.saveResponse(dummyPartialResponse2Marshalled)
 
 	var expected []interface{}
-	expected = append(expected, dummyPartialResponse1Marshalled.data)
-	expected = append(expected, dummyPartialResponse2Marshalled.data)
+	expected = append(expected, dummyPartialResponse1Marshalled)
+	expected = append(expected, dummyPartialResponse2Marshalled)
 
 	results, _ := c.results.Load(dummyPartialResponse1Marshalled.requestId)
 	if reflect.DeepEqual(results.([]interface{}), expected) != true {
@@ -165,8 +165,8 @@ func TestResponseRetrieval(t *testing.T) {
 	resp := c.retrieveResponse(dummyPartialResponse1Marshalled.requestId)
 
 	var expected []interface{}
-	expected = append(expected, dummyPartialResponse1Marshalled.data)
-	expected = append(expected, dummyPartialResponse2Marshalled.data)
+	expected = append(expected, dummyPartialResponse1Marshalled)
+	expected = append(expected, dummyPartialResponse2Marshalled)
 
 	if reflect.DeepEqual(resp, expected) != true {
 		t.Fail()
