@@ -1,9 +1,10 @@
 package gremgo
 
 import (
+	"fmt"
+	"log"
 	"reflect"
 	"testing"
-	"log"
 )
 
 /*
@@ -76,7 +77,7 @@ func TestResponseHandling(t *testing.T) {
 func TestResponseAuthHandling(t *testing.T) {
 	c := newClient()
 	ws := new(Ws)
-	ws.auth = &auth{username:"test", password:"test"}
+	ws.auth = &auth{username: "test", password: "test"}
 	c.conn = ws
 
 	c.handleResponse(dummyNeedAuthenticationResponse)
@@ -92,14 +93,18 @@ func TestResponseAuthHandling(t *testing.T) {
 		return
 	}
 
-	authRequest := <- c.requests //Simulate that client send auth challenge to server
+	fmt.Println("before c.req")
+	authRequest := <-c.requests //Simulate that client send auth challenge to server
+	fmt.Println("after c.req")
 
-	if !reflect.DeepEqual(authRequest, sampleAuthRequest){
+	if !reflect.DeepEqual(authRequest, sampleAuthRequest) {
 		t.Error("Expected data type does not match actual.")
 	}
 
+	fmt.Println("handleResponse")
 	c.handleResponse(dummySuccessfulResponse) //If authentication is successful the server returns the origin petition
 
+	fmt.Println("expectedSuccessful")
 	var expectedSuccessful []interface{}
 	expectedSuccessful = append(expectedSuccessful, dummySuccessfulResponseMarshalled)
 
